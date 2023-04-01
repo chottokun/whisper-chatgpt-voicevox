@@ -68,7 +68,7 @@ def sentencs_to_talk(text: str):
     futures = []
     with ThreadPoolExecutor(max_workers=4) as executor:
         for i, t in enumerate(split_text(text)):
-            print(t)
+            # print(t)
             arg = [t,i]
             futures.append(executor.submit(text_to_wav, *arg))
         for future in futures:
