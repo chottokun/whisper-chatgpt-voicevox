@@ -10,7 +10,7 @@ if EXIT_PHRASE =="" : EXIT_PHRASE = 'exit'
 if SYSTEM_CONTENT =="" : SYSTEM_CONTENT = 'You are a helpful assistant.'
 
 # Closing word.
-SYSTEM_CONTENT += f'終了やストップなどの会話を終了する内容で話しかけられた場合は{EXIT_PHRASE}とだけ必ず返答。'
+SYSTEM_CONTENT += f'終了やストップなどの会話を終了する内容で話しかけられた場合は{EXIT_PHRASE}とだけ必ず返答するものとします。'
 
 def main():
     messages = []
@@ -22,15 +22,13 @@ def main():
         )
         response = chat(SYSTEM_CONTENT, messages)
 
-        if response == EXIT_PHRASE:
+        if EXIT_PHRASE in response:
             exit_flag = True
             response = 'またね！'
 
         messages.append(
             {'role': 'assistant', 'content': response}
         )
-
-        print(messages)
 
         print(f'User   : {text}')
         print(f'ChatGPT: {response}')

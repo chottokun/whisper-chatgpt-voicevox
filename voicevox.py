@@ -8,7 +8,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 def post_audio_query(text: str) -> dict:
-    params = {'text': text, 'speaker': 1}
+    params = {'text': text, 'speaker': 3}
     res = requests.post('http://127.0.0.1:50021/audio_query', params=params)
     return res.json()
 
@@ -60,13 +60,13 @@ def text_to_wav(text: str, i):
     return wav
 
 def split_text(text: str):
-    return re.split("[。、「」]", text)
+    return re.split("(?<=[。、「」])", text)
 
 def sentencs_to_talk(text: str):
     futures = []
     with ThreadPoolExecutor(max_workers=4) as executor:
         for i, t in enumerate(split_text(text)):
-            # print(t)
+            print(t)
             arg = [t,i]
             futures.append(executor.submit(text_to_wav, *arg))
         for future in futures:
