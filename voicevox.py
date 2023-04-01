@@ -7,13 +7,15 @@ from time import sleep
 import re
 from concurrent.futures import ThreadPoolExecutor
 
+SPEAKER_ID = 46
+
 def post_audio_query(text: str) -> dict:
-    params = {'text': text, 'speaker': 3}
+    params = {'text': text, 'speaker': SPEAKER_ID}
     res = requests.post('http://127.0.0.1:50021/audio_query', params=params)
     return res.json()
 
 def post_synthesis(audio_query_response: dict) -> bytes:
-    params = {'speaker': 1}
+    params = {'speaker': SPEAKER_ID}
     headers = {'content-type': 'application/json'}
     audio_query_response_json = json.dumps(audio_query_response)
     res = requests.post(
@@ -42,7 +44,7 @@ def play_wav(wav_file: bytes):
     while len(data) > 0:
         stream.write(data)
         data = wr.readframes(chunk)
-    # sleep(0.5)
+    sleep(0.1)
     stream.close()
     p.terminate()
 
@@ -60,7 +62,7 @@ def text_to_wav(text: str, i):
     return wav
 
 def split_text(text: str):
-    return re.split("(?<=[。、「」])", text)
+    return re.split("(?<=[。、「」！？?!])", text)
 
 def sentencs_to_talk(text: str):
     futures = []

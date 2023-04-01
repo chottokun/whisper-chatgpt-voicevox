@@ -17,6 +17,10 @@ def main():
     exit_flag = False
     while not exit_flag:
         text = voice_to_text()
+
+        # print(text)
+        if len(text) < 4 : continue
+
         messages.append(
             {'role': 'user', 'content': text}
         )
@@ -29,7 +33,7 @@ def main():
         messages.append(
             {'role': 'assistant', 'content': response}
         )
-
+        
         print(f'User   : {text}')
         print(f'ChatGPT: {response}')
         sentencs_to_talk(response)
