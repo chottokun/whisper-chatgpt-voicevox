@@ -1,7 +1,7 @@
 import openai
 from chat import chat
 from whisper import voice_to_text
-from voicevox import text_to_voice
+from voicevox import text_to_voice, sentencs_to_talk
 from conf import APIKEY
 
 openai.api_key = APIKEY
@@ -29,7 +29,7 @@ def main():
         )
         print(f'User   : {text}')
         print(f'ChatGPT: {response}')
-        text_to_voice(response)
+        sentencs_to_talk(response)
 
 
 if __name__ == '__main__':
