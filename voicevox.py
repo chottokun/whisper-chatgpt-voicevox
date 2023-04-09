@@ -62,7 +62,7 @@ async def text_to_voice_async(text: str, i=0):
     wav = await post_synthesis(audio_query_response)
     await play_wav_async(wav)
 
-async def text_to_wav_async(text: str, i):
+async def text_to_wav_async(text: str):
     audio_query_response = await post_audio_query(text)
     wav = await post_synthesis(audio_query_response)
     return wav
@@ -115,8 +115,10 @@ async def main():
     print("---------")
     await sentences_to_talk_async("こんにちは！元気ですか？私は元気です。今日はとてもいい天気でした。そちらはどうでしたか？")
     print("---------")
+    talk_task = asyncio.create_task(text_to_voice_async("こんにちは！元気ですか？私は元気です。今日はとてもいい天気でした。そちらはどうでしたか？"))
     await text_to_talk_async("こんにちは！元気ですか？私は元気です。今日はとてもいい天気でした。そちらはどうでしたか？")
     print("---------")
+    # text_to_voice_async
     return
 
 if __name__ == '__main__':

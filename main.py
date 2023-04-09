@@ -2,7 +2,7 @@ import asyncio
 import openai
 from chat import chat
 from whisper import voice_to_text
-from voicevox import text_to_voice_async, text_to_voice_async
+from voicevox import text_to_wav_async, play_wav_async
 from conf import APIKEY, EXIT_PHRASE, SYSTEM_CONTENT
 import re
 #
@@ -28,26 +28,39 @@ async def main():
         )
 
         is_chunk = True
-        chunk_response = ""
+        talk_tasks = []
+        response_text = ""
+        wav_tasks = []
         while is_chunk:
             async for response, is_chunk in chat(SYSTEM_CONTENT, messages):
-                if not is_chunk: break
-                chunk_response += response
-                if re.search("[。、「」！？?!.]", response):
-                    await text_to_voice_async(chunk_response)
-                    chunk_response = ""
-
+                
+                if not is_chunk:
+                    if len(wav_tasks) > 0: await wav_tasks[-1]
+                    continue
+                else:
+                    talk_tasks.append(asyncio.create_task(text_to_wav_async(response)))
+                    # print(talk_tasks[-1].done())
+                    while not talk_tasks[-1].done():
+                        print(".")
+                        if len(wav_tasks) > 0: await wav_tasks[-1]
+                        wav = await talk_tasks[-1]
+                        wav_tasks.append(asyncio.create_task(play_wav_async(wav)))
+                    response_text += response
 
         if EXIT_PHRASE in response:
             exit_flag = True
             response = 'またね！'
 
         messages.append(
-            {"role": "assistant", "content": response}
+            {"role": "assistant", "content": response_text}
         )
+
+        # for f in talk_tasks:
+        #     wav = await f
+        #     await play_wav_async(wav)
         
         print(f'User   : {text}')
-        print(f'ChatGPT: {response}')
+        print(f'ChatGPT: {response_text}')
         # text_to_voice_async(response)
 
 
